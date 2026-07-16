@@ -36,9 +36,12 @@ app.post('/api/data', (req, res) => {
 
   // 기록 저장 (15초마다 ESP32가 보내므로 그대로 전부 쌓음)
   if (!history[id]) history[id] = [];
+  const last = history[id][history[id].length - 1];
+  const INTERVAL_MS = 15 * 60 * 1000; // 15분
+  if (!last || (now - last.time) >= INTERVAL_MS) {
   history[id].push({ time: now, temp1: Number(temp1), temp2: Number(temp2) });
   if (history[id].length > MAX_HISTORY) history[id].shift(); // 오래된 것 제거
-
+  }
   res.json({ ok: true });
 });
 
